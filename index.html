@@ -641,6 +641,20 @@
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
   }
 
+  .menu-score-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin-bottom: 15px;
+  }
+
+  .menu-score-grid .menu-item {
+    width: auto;
+    margin-bottom: 0;
+    padding: 12px 6px;
+    text-align: center;
+  }
+
   .menu-item:hover {
     background-color: #777;
     transform: translateX(5px);
@@ -680,8 +694,9 @@
     border: none;
     border-radius: 8px;
     background-color: #555;
-    color: white;
+    color: #ffdd1a;
     font-size: 1.1em;
+    font-weight: bold;
     box-sizing: border-box;
   }
 
@@ -742,7 +757,7 @@
       <div class="teams-row">
         <div class="team-score">
           <h2 class="team-name">
-            <input type="text" id="home-team-name" value="HOME" class="team-name-input" onchange="updateTeamName('home', this.value)">
+            <input type="text" id="home-team-name" value="HOME" class="team-name-input" oninput="updateTeamName('home', this.value)">
           </h2>
           <div class="score" id="team-a-score">0</div>
           <div class="foul-indicator">
@@ -800,7 +815,7 @@
 
         <div class="team-score">
           <h2 class="team-name">
-            <input type="text" id="away-team-name" value="AWAY" class="team-name-input" onchange="updateTeamName('away', this.value)">
+            <input type="text" id="away-team-name" value="AWAY" class="team-name-input" oninput="updateTeamName('away', this.value)">
           </h2>
           <div class="score" id="team-b-score">0</div>
           <div class="foul-indicator">
@@ -838,7 +853,30 @@
       
       <div class="menu-section">Scores</div>
       <button class="menu-item" onclick="resetTeamScores()">♻ Reset Scores   [T]</button>
-      
+
+      <div class="menu-section">
+        <input type="text" id="menu-home-team" placeholder="Home Team" class="menu-team-input" oninput="updateTeamName('home', this.value)">
+      </div>
+      <div class="menu-score-grid">
+        <button class="menu-item" onclick="updateScore('home', 1)">+ 1  [Q]</button>
+        <button class="menu-item" onclick="updateScore('home', -1)">- 1 [A]</button>
+        <button class="menu-item" onclick="updateScore('home', 2)">+ 2  [W]</button>
+        <button class="menu-item" onclick="updateScore('home', -2)">- 2 [S]</button>
+        <button class="menu-item" onclick="updateScore('home', 3)">+ 3  [E]</button>
+        <button class="menu-item" onclick="updateScore('home', -3)">- 3 [D]</button>
+      </div>
+      <div class="menu-section">
+        <input type="text" id="menu-away-team" placeholder="Away Team" class="menu-team-input" oninput="updateTeamName('away', this.value)">
+      </div>
+      <div class="menu-score-grid">
+        <button class="menu-item" onclick="updateScore('away', 1)">+ 1  [U]</button>
+        <button class="menu-item" onclick="updateScore('away', -1)">- 1 [J]</button>
+        <button class="menu-item" onclick="updateScore('away', 2)">+ 2  [I]</button>
+        <button class="menu-item" onclick="updateScore('away', -2)">- 2 [K]</button>
+        <button class="menu-item" onclick="updateScore('away', 3)">+ 3  [O]</button>
+        <button class="menu-item" onclick="updateScore('away', -3)">- 3 [L]</button>
+      </div>
+
       <div class="menu-section">Shot Clock</div>
       <button class="menu-item" onclick="resetShotClock(24)">⏱ 24s   [<]</button>
       <button class="menu-item" onclick="resetShotClock(14)">⏱ 14s   [>]</button>
@@ -849,7 +887,7 @@
       <button class="menu-item quarter-btn" onclick="setQuarter(3)">3rd    [3]</button>
       <button class="menu-item quarter-btn" onclick="setQuarter(4)">4th    [4]</button>
       <div class="menu-ot-dropdown">
-        <button class="menu-item quarter-btn" id="menuOtBtn" onclick="toggleMenuOt()">OT</button>
+        <button class="menu-item quarter-btn" id="menuOtBtn" onclick="toggleMenuOt()">OT  [5]</button>
         <div id="menuOtDropdown" class="menu-dropdown-content" style="display:none;">
           <button class="menu-item quarter-btn" onclick="setQuarter('OT')">OT   [5]</button>
           <button class="menu-item quarter-btn" onclick="setQuarter('OT2')">OT2   [6]</button>
@@ -863,10 +901,6 @@
       <button class="menu-item buzzer-menu" onmousedown="menuBuzzerDown()" onmouseup="menuBuzzerUp()" onmouseleave="menuBuzzerUp()">🔊 Buzzer   [B]</button>
       <button class="menu-item" onclick="swapTeams()">⇄ Swap Teams    [X]</button>
       <button class="menu-item" onclick="window.open('viewer.html', '_blank')">👁️ Viewer    [V]</button>
-      
-      <div class="menu-section">Teams</div>
-      <input type="text" id="menu-home-team" placeholder="Home Team" class="menu-team-input" onchange="updateTeamName('home', this.value)">
-      <input type="text" id="menu-away-team" placeholder="Away Team" class="menu-team-input" onchange="updateTeamName('away', this.value)">
     </div>
   </div>
 
@@ -1122,12 +1156,21 @@
     let homeTeamName = "HOME";
     let awayTeamName = "AWAY";
 
+    function syncTeamNameInputs(team, name) {
+      const inputId = team === 'home' ? 'home-team-name' : 'away-team-name';
+      const menuInputId = team === 'home' ? 'menu-home-team' : 'menu-away-team';
+      document.querySelectorAll(`#${inputId}, #${menuInputId}`).forEach(input => {
+        input.value = name;
+      });
+    }
+
     function updateTeamName(team, name) {
       if (team === 'home') {
         homeTeamName = name;
       } else {
         awayTeamName = name;
       }
+      syncTeamNameInputs(team, name);
       saveToLocalStorage();
       // Force storage event to trigger real-time updates
       window.dispatchEvent(new Event('storage'));
@@ -1156,9 +1199,7 @@
     // Initialize keydown handler
     let keydownHandler = function(event) {
       const activeElement = document.activeElement;
-      const isInputFocused = activeElement.tagName === 'INPUT' && 
-                           (activeElement.id === 'home-team-name' || 
-                            activeElement.id === 'away-team-name');
+      const isInputFocused = activeElement.matches('.team-name-input, .menu-team-input');
       
       if (!isInputFocused) {
         const controlKeys = [' ', 'r', '1', '2', '3', '4', '5', 'q', 'w', 'e', 'a', 's', 'd', 'u', 'i', 'o', 'j', 'k', 'l', ',', '.'];
@@ -1224,8 +1265,8 @@
       document.getElementById('away-team-name').value = homeName;
       homeTeamName = awayName;
       awayTeamName = homeName;
-      document.getElementById('menu-home-team').value = homeTeamName;
-      document.getElementById('menu-away-team').value = awayTeamName;
+      syncTeamNameInputs('home', homeTeamName);
+      syncTeamNameInputs('away', awayTeamName);
       
       // Swap scores
       const tempScore = homeScore;
@@ -1340,6 +1381,17 @@
       document.getElementById('menuOverlay').classList.toggle('active');
     }
 
+    function hideMenu() {
+      document.getElementById('menuOverlay').classList.remove('active');
+    }
+
+    document.querySelector('.menu-content').addEventListener('click', function(event) {
+      const menuItem = event.target.closest('.menu-item');
+      if (menuItem && menuItem.id !== 'menuOtBtn') {
+        hideMenu();
+      }
+    });
+
     function toggleGameTimerMenu() {
       toggleGameTimer();
       const menuBtn = document.getElementById('menuPlayPause');
@@ -1393,8 +1445,8 @@
     };
 
     // Sync team names in menu
-    document.getElementById('menu-home-team').value = homeTeamName || 'HOME';
-    document.getElementById('menu-away-team').value = awayTeamName || 'AWAY';
+    syncTeamNameInputs('home', homeTeamName || 'HOME');
+    syncTeamNameInputs('away', awayTeamName || 'AWAY');
     
     let currentQuarter = 1;
     let homeFouls = [false, false, false, false, false];
