@@ -730,7 +730,7 @@
 </head>
 <body>
   <div class="container">
-    <button class="burger-menu" onclick="toggleMenu()">☰</button>
+    <button class="burger-menu" onclick="toggleMenu()" hidden>☰</button>
     <h1 class="header">SCOREBOARD CONTROL PANNEL</h1>
     <div class="timer-row" style="display: flex; align-items: center; justify-content: center; gap: 20px;">
       <div class="arrow-btn" id="home-arrow" style="font-size: 5em; cursor: pointer; color: white;" onclick="toggleArrow('home')">◄</div>
@@ -1380,17 +1380,6 @@
     function toggleMenu() {
       document.getElementById('menuOverlay').classList.toggle('active');
     }
-
-    function hideMenu() {
-      document.getElementById('menuOverlay').classList.remove('active');
-    }
-
-    document.querySelector('.menu-content').addEventListener('click', function(event) {
-      const menuItem = event.target.closest('.menu-item');
-      if (menuItem && menuItem.id !== 'menuOtBtn') {
-        hideMenu();
-      }
-    });
 
     function toggleGameTimerMenu() {
       toggleGameTimer();
