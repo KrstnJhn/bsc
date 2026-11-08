@@ -1222,6 +1222,10 @@
       const awayName = document.getElementById('away-team-name').value;
       document.getElementById('home-team-name').value = awayName;
       document.getElementById('away-team-name').value = homeName;
+      homeTeamName = awayName;
+      awayTeamName = homeName;
+      document.getElementById('menu-home-team').value = homeTeamName;
+      document.getElementById('menu-away-team').value = awayTeamName;
       
       // Swap scores
       const tempScore = homeScore;
