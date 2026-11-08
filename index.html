@@ -557,6 +557,10 @@
     transition: all 0.3s ease;
   }
 
+  .burger-menu[hidden] {
+    display: none;
+  }
+
   .burger-menu:hover {
     transform: scale(1.05);
     box-shadow: 0 6px 12px rgba(0,0,0,0.4);
@@ -730,7 +734,7 @@
 </head>
 <body>
   <div class="container">
-    <button class="burger-menu" onclick="toggleMenu()" hidden>☰</button>
+    <button class="burger-menu" onclick="toggleMenu()">☰</button>
     <h1 class="header">SCOREBOARD CONTROL PANNEL</h1>
     <div class="timer-row" style="display: flex; align-items: center; justify-content: center; gap: 20px;">
       <div class="arrow-btn" id="home-arrow" style="font-size: 5em; cursor: pointer; color: white;" onclick="toggleArrow('home')">◄</div>
@@ -845,7 +849,7 @@
   <!-- Burger Menu Overlay -->
   <div id="menuOverlay" class="menu-overlay" onclick="toggleMenu()">
     <div class="menu-content" onclick="event.stopPropagation()">
-      <button class="menu-close" onclick="toggleMenu()">×</button>
+      <button class="menu-close" onclick="toggleMenu()"> </button>
       
       <div class="menu-section">Timer Controls</div>
       <button class="menu-item" id="menuPlayPause" onclick="toggleGameTimerMenu()">▶ PLAY   [SPACE]</button>
@@ -887,7 +891,7 @@
       <button class="menu-item quarter-btn" onclick="setQuarter(3)">3rd    [3]</button>
       <button class="menu-item quarter-btn" onclick="setQuarter(4)">4th    [4]</button>
       <div class="menu-ot-dropdown">
-        <button class="menu-item quarter-btn" id="menuOtBtn" onclick="toggleMenuOt()">OT  [5]</button>
+        <button class="menu-item quarter-btn" id="menuOtBtn" onclick="toggleMenuOt()">OT</button>
         <div id="menuOtDropdown" class="menu-dropdown-content" style="display:none;">
           <button class="menu-item quarter-btn" onclick="setQuarter('OT')">OT   [5]</button>
           <button class="menu-item quarter-btn" onclick="setQuarter('OT2')">OT2   [6]</button>
@@ -1378,7 +1382,9 @@
     
     // Burger Menu Functions
     function toggleMenu() {
-      document.getElementById('menuOverlay').classList.toggle('active');
+      const menuOverlay = document.getElementById('menuOverlay');
+      const isActive = menuOverlay.classList.toggle('active');
+      document.querySelector('.burger-menu').hidden = isActive;
     }
 
     function toggleGameTimerMenu() {
